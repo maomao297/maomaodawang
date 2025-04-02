@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园助手 - 原型设计</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .prototype-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+        }
+        
+        .phone-frame {
+            width: 393px; /* iPhone 15 宽度 */
+            height: 852px; /* iPhone 15 高度 */
+            background-color: white;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 44px;
+            width: 100%;
+            background-color: #2D3E50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .status-bar-light {
+            background-color: white;
+            color: #333;
+        }
+        
+        .time {
+            font-weight: bold;
+        }
+        
+        .status-icons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 30px;
+            background-color: #000;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 11;
+        }
+        
+        .dynamic-island {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 30px;
+            background-color: #000;
+            border-radius: 20px;
+            z-index: 11;
+        }
+        
+        .content {
+            height: calc(100% - 44px - 80px);
+            overflow-y: auto;
+            background-color: #F5F5F5;
+        }
+        
+        .nav-bar {
+            height: 80px;
+            width: 100%;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #EEEEEE;
+            position: absolute;
+            bottom: 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666666;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: #FF6B6B;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header {
+            height: 60px;
+            width: 100%;
+            background-color: #2D3E50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            margin: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 10px;
+        }
+        
+        .card-content {
+            color: #666666;
+            font-size: 14px;
+        }
+        
+        .quick-access {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin: 15px;
+        }
+        
+        .quick-item {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .quick-item-icon {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 5px;
+        }
+        
+        .quick-item-text {
+            font-size: 12px;
+            color: #333333;
+        }
+        
+        .schedule-day {
+            display: flex;
+            justify-content: space-around;
+            background-color: white;
+            padding: 15px 0;
+        }
+        
+        .day-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .day-item.active {
+            color: white;
+            background-color: #FF6B6B;
+            border-radius: 20px;
+            padding: 5px 10px;
+        }
+        
+        .schedule-grid {
+            position: relative;
+            margin: 15px;
+            padding-left: 30px;
+            min-height: 600px;
+        }
+        
+        .time-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #2D3E50;
+        }
+        
+        .time-label {
+            position: absolute;
+            left: -25px;
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .course-card {
+            position: absolute;
+            width: 80px;
+            background-color: white;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #FF6B6B;
+        }
+        
+        .course-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 5px;
+        }
+        
+        .course-location {
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .course-teacher {
+            font-size: 12px;
+            color: #666666;
+            margin-top: 5px;
+        }
+        
+        .map-container {
+            position: relative;
+            margin: 15px;
+            height: 300px;
+            background-color: #E8F4FC;
+            border-radius: 10px;
+        }
+        
+        .building {
+            position: absolute;
+            background-color: #2D3E50;
+            color: white;
+            text-align: center;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .map-controls {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .map-control-btn {
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .map-list {
+            margin: 15px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .map-list-tabs {
+            display: flex;
+            border-bottom: 1px solid #EEEEEE;
+        }
+        
+        .map-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #666666;
+        }
+        
+        .map-tab.active {
+            background-color: #FF6B6B;
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .map-list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #EEEEEE;
+        }
+        
+        .map-item-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #FF6B6B;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .map-item-info {
+            flex: 1;
+        }
+        
+        .map-item-name {
+            font-size: 14px;
+            color: #333333;
+        }
+        
+        .map-item-distance {
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .social-tabs {
+            display: flex;
+            background-color: white;
+            margin-bottom: 15px;
+        }
+        
+        .social-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 14px;
+            color: #666666;
+        }
+        
+        .social-tab.active {
+            color: white;
+            background-color: #2D3E50;
+        }
+        
+        .post-card {
+            margin: 15px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .post-header {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to right, #E0F7FA, #B2EBF2);
+        }
+        
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #2D3E50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .post-info {
+            flex: 1;
+        }
+        
+        .post-author {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333333;
+        }
+        
+        .post-time {
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .post-content {
+            padding: 15px;
+            font-size: 14px;
+            color: #333333;
+        }
+        
+        .post-actions {
+            display: flex;
+            border-top: 1px solid #EEEEEE;
+            padding: 10px 15px;
+        }
+        
+        .post-action {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .post-action-icon {
+            margin-right: 5px;
+        }
+        
+        .profile-header {
+            height: 200px;
+            background: linear-gradient(to bottom, #1A2A3A, #2D3E50);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #EEEEEE;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #2D3E50;
+            margin-bottom: 10px;
+        }
+        
+        .profile-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info {
+            font-size: 14px;
+            color: #CCCCCC;
+        }
+        
+        .profile-edit {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid white;
+            border-radius: 15px;
+            padding: 5px 15px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .profile-quick-access {
+            display: flex;
+            justify-content: space-around;
+            background-color: white;
+            margin: 15px;
+            border-radius: 10px;
+            padding: 15px 0;
+        }
+        
+        .profile-quick-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .profile-quick-icon {
+            width: 30px;
+            height: 30px;
+            background-color: #F5F5F5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        
+        .profile-quick-text {
+            font-size: 12px;
+            color: #333333;
+        }
+        
+        .profile-menu {
+            margin: 15px;
+            background-color: white;
+            border-radius: 10px;
+        }
+        
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #EEEEEE;
+        }
+        
+        .profile-menu-icon {
+            width: 30px;
+            height: 30px;
+            background-color: #F5F5F5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .profile-menu-text {
+            flex: 1;
+            font-size: 16px;
+            color: #333333;
+        }
+        
+        .profile-menu-arrow {
+            color: #CCCCCC;
+        }
+        
+        .logout-btn {
+            margin: 15px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            color: #FF6B6B;
+            font-size: 16px;
+        }
+        
+        .floating-btn {
+            position: absolute;
+            right: 20px;
+            bottom: 100px;
+            width: 50px;
+            height: 50px;
+            background-color: #FF6B6B;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        .screen-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #333;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .prototype-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="screen-title">校园助手 - iOS App原型设计</h1>
+    
+    <div class="prototype-container">
+        <!-- 首页 -->
+        <div class="phone-frame">
+            <div class="dynamic-island"></div>
+            <div class="screen">
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="header">校园助手</div>
+                <div class="content">
+                    <div class="card">
+                        <div class="card-title">校园通知</div>
+                        <div class="card-content">
+                            <p>• 关于2023年秋季学期注册的通知</p>
+                            <p>• 图书馆暑期开放时间调整公告</p>
+                            <p>• 校园网络维护通知（5月20日）</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-title" style="margin-left: 15px;">快捷入口</div>
+                    <div class="quick-access">
+                        <div class="quick-item">
+                            <svg class="quick-item-icon" viewBox="0 0 24 24" fill="none" stroke="#2D3E50" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                                <line x1="3" y1="8" x2="21" y2="8"></line>
+                                <line x1="9" y1="4" x2="9" y2="20"></line>
+                                <line x1="15" y1="4" x2="15" y2="20"></line>
+                            </svg>
+                            <div class="quick-item-text">课程表</div>
+                        </div>
+                        <div class="quick-item">
+                            <svg class="quick-item-icon" viewBox="0 0 24 24" fill="none" stroke="#2D3E50" stroke-width="2">
+                                <rect x="4" y="4" width="16" height="12" rx="2"></rect>
+                                <path d="M8 16v2h8v-2"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <div class="quick-item-text">一卡通</div>
+                        </div>
+                        <div class="quick-item">
+                            <svg class="quick-item-icon" viewBox="0 0 24 24" fill="none" stroke="#2D3E50" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            </svg>
+                            <div class="quick-item-text">成绩查询</div>
+                        </div>
+                        <div class="quick-item">
+                            <svg class="quick-item-icon" viewBox="0 0 24 24" fill="none" stroke="#2D3E50" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12" y2="16"></line>
+                            </svg>
+                            <div class="quick-item-text">校园资讯</div>
+                        </div>
+                        <div class="quick-item">
+                            <svg class="quick-item-icon" viewBox="0 0 24 24" fill="none" stroke="#2D3E50" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12" y2="17"></line>
+                            </svg>
+                            <div class="quick-item-text">帮助中心</div>
+                        </div>
+                        <div class="quick-item">
+                            <svg class="quick-item-icon" viewBox="0 0 24 24" fill="none" stroke="#2D3E50" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            <div class="quick-item-text">图书馆</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">今日天气</div>
+                        <div class="card-content" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <p>晴 • 25°C • 空气优</p>
+                                <p>今日建议：适合户外活动</p>
+                            </div>
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="#FF6B6B">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3" stroke="#FF6B6B" stroke-width="2"></line>
+                                <line x1="12" y1="21" x2="12" y2="23" stroke="#FF6B6B" stroke-width="2"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="#FF6B6B" stroke-width="2"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="#FF6B6B" stroke-width="2"></line>
+                                <line x1="1" y1="12" x2="3" y2="12" stroke="#FF6B6B" stroke-width="2"></line>
+                                <line x1="21" y1="12" x2="23" y2="12" stroke="#FF6B6B" stroke-width="2"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="#FF6B6B" stroke-width="2"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="#FF6B6B" stroke-width="2"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="card-title" style="margin-left: 15px;">为你推荐</div>
+                    <div style="display: flex; margin: 0 15px; gap: 15px;">
+                        <div style="flex: 1; background-color: white; border-radius: 10px; overflow: hidden;">
+                            <div style="height: 80px; background-color: #2D3E50;"></div>
+                            <div style="padding: 10px;">
+                                <div style="font-weight: bold; font-size: 14px; color: #333;">校园歌手大赛</div>
+                                <div style="font-size: 12px; color: #666;">5月20日 大礼堂</div>
+                            </div>
+                        </div>
+                        <div style="flex: 1; background-color: white; border-radius: 10px; overflow: hidden;">
+                            <div style="height: 80px; background-color: #FF6B6B;"></div>
+                            <div style="padding: 10px;">
+                                <div style="font-weight: bold; font-size: 14px; color: #333;">创新创业讲座</div>
+                                <div style="font-size: 12px; color: #666;">5月25日 报告厅</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-bar">
+                    <div class="nav-item active">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="#FF6B6B">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <div>首页</div>
+                    </div>
+                    <div class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                            <line x1="3" y1="8" x2="21" y2="8"></line>
+                            <line x1="9" y1="4" x2="9" y2="20"></line>
+                            <line x1="15" y1="4" x2="15" y2="20"></line>
+                        </svg>
+                        <div>课程表</div>
+                    </div>
+                    <div class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="2" x2="12" y2="22"></line>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                        </svg>
+                        <div>地图</div>
+                    </div>
+                    <div class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <div>社交</div>
+                    </div>
+                    <div class="nav-item">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <div>我的</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 课程表 -->
+        <div class="phone-frame">
+            <div class="dynamic-island"></div>
+            <div class="screen">
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="header">课程表</div>
+                <div class="content">
+                    <div style="background-color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 16px; color: #333;">第12周</div>
+                        <div style="font-size: 14px; color: #666;">2023年5月15日 - 5月21日</div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2">
